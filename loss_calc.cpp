@@ -90,6 +90,7 @@ int main(int argc, char **argv)
     
     // create a raster data set, with same dimensions as flood inundation maps
     auto loss_raster = raster_util::create_gdal_raster_from_model<double>(loss_path, depth);
+    loss_raster.setNoDataValue(0.0);
     std::map<int, double> loss_by_class;
     double net_loss;
     

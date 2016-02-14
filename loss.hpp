@@ -6,6 +6,7 @@
 #include "util/zip_range.h"
 #include <functional>
 #include <tuple>
+#include <cmath>
 
 const double CELL_AREA = 0.09; //unit: hectares
 
@@ -20,10 +21,18 @@ void calcLoss(raster_util::gdal_raster<int> & landuse,
     auto zip = raster_util::make_zip_range(std::ref(landuse), std::ref(proportion), std::ref(depth), std::ref(loss_raster));
     for (auto i : zip)
     {
-        auto& landuse_i = std::get<0>(i);
-        auto& proportion_i = std::get<1>(i);
-        auto& depth_i = std::get<2>(i);
+        const int & landuse_i = std::get<0>(i);
+        double proportion_i = std::get<1>(i);
+        double depth_i = std::get<2>(i);
         auto& loss_raster_i = std::get<3>(i);
+        
+        if (std::isnan(proportion_i)) proportion_i = 0;
+        if (std::isnan(depth_i)) depth_i = 0;
+        
+        if (depth_i != 0)
+        {
+            std::cout << "no zero\n";
+        }
         
         loss = 0.0;
         switch(landuse_i)
@@ -59,6 +68,8 @@ void calcLoss(raster_util::gdal_raster<int> & landuse,
                 loss = 0;
                 break;
         }
+        
+        
         loss = loss * CELL_AREA * proportion_i;
         loss_raster_i = loss;
         loss_by_class[landuse_i] += loss;

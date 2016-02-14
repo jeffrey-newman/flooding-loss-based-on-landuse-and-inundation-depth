@@ -267,6 +267,16 @@ namespace raster_util {
     {
       return m_gdal_dataset;
     }
+      
+      void setNoDataValue(T value)
+      {
+          m_gdal_rasterband->SetNoDataValue(value);
+      }
+      
+      T getNoDataValue(void)
+      {
+          m_gdal_rasterband->GetNoDataValue();
+      }
 
   private:
     void initialize()
